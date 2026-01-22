@@ -12,26 +12,23 @@ app = FastAPI(title="AI Support Co-Pilot API")
 # Configuración de Clientes
 supabase: Client = create_client(
     os.getenv("SUPABASE_URL"), 
-    os.getenv("SUPABASE_SERVICE_KEY") # Usar Service Key para bypass RLS si es necesario
+    os.getenv("SUPABASE_SERVICE_KEY")
 )
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash",
     google_api_key=os.getenv("GOOGLE_API_KEY"),
-    temperature=0 # Rigor técnico: 0 para consistencia en clasificación
+    temperature=0 
 )
 
-# Creamos un "Runnable" que garantiza la salida estructurada
 structured_llm = llm.with_structured_output(TicketAnalysis)
 
 @app.post("/process-ticket")
 async def process_ticket(ticket: TicketRequest):
     try:
-        # 1. Análisis con IA
         prompt = f"Analiza el siguiente ticket de soporte y extrae categoría y sentimiento: {ticket.description}"
         analysis: TicketAnalysis = structured_llm.invoke(prompt)
 
-        # 2. Actualización en Supabase
         update_data = {
             "category": analysis.category.value,
             "sentiment": analysis.sentiment.value,
@@ -50,6 +47,5 @@ async def process_ticket(ticket: TicketRequest):
         }
 
     except Exception as e:
-        # En una prueba técnica, el logging y manejo de errores demuestra seniority
         print(f"Error procesando ticket {ticket.id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Error interno en el procesamiento de IA")
