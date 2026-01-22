@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from langchain_google_genai import ChatGoogleGenerativeAI
-from .schemas import TicketRequest, TicketAnalysis
+from schemas import TicketRequest, TicketAnalysis
 
 load_dotenv()
 
