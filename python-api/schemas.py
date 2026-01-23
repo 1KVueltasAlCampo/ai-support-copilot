@@ -13,10 +13,9 @@ class SentimentEnum(str, Enum):
     negativo = "Negativo"
 
 class TicketRequest(BaseModel):
-    id: str  # El ID que viene de Supabase/n8n
+    id: str
     description: str
 
 class TicketAnalysis(BaseModel):
-    """Esquema para la salida estructurada del LLM"""
     category: CategoryEnum = Field(description="Categoría principal del ticket")
     sentiment: SentimentEnum = Field(description="Sentimiento predominante del usuario")

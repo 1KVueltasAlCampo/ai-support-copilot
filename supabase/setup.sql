@@ -13,11 +13,9 @@ CREATE TABLE tickets (
 );
 
 -- 3. Habilitar el tiempo real (Realtime)
--- Esto permite que el Dashboard de React "escuche" cambios sin refrescar
 ALTER PUBLICATION supabase_realtime ADD TABLE tickets;
 
 -- 4. Configurar Seguridad (RLS)
--- Por defecto, Supabase bloquea todo. Para la prueba, habilitaremos acceso público.
 ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Permitir acceso total público" 
