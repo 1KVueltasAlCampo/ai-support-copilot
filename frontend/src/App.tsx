@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { CheckCircle2, Clock, Tag, MessageSquare, BarChart3, Calendar } from 'lucide-react';
+import { CheckCircle2, Clock, Tag, BarChart3, Calendar } from 'lucide-react';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,

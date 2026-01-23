@@ -1,0 +1,143 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-ticket-trigger",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7a01675b-eb89-4970-a9d3-f34fcdb244c2",
+      "name": "Webhook",
+      "webhookId": "49b2c28b-949b-44cf-8839-18c84e0ea218"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ai-support-copilot-0im9.onrender.com/process-ticket",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"{{ $json.body.record.id }}\",\n  \"description\": \"{{ $json.body.record.description }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0d23c24d-6516-493c-8b56-f38e1a6f2c8b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a7c439b7-9c01-4159-9953-17bc06dc482d",
+              "leftValue": "={{ $json.analysis.sentiment }}",
+              "rightValue": "Negativo",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "263d1dd4-8587-45ad-9604-d17a048bd844",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "angrybirdsgallo@gmail.com",
+        "subject": "=Urgente: Ticket Negativo Detectado (ID:{{ $('Webhook').item.json.body.record.id }} )",
+        "message": "=<p>Se ha detectado un ticket con sentimiento negativo.</p> <p><strong>Categoría:</strong> {{ $('HTTP Request').item.json.analysis.category }}</p> <p><strong>Descripción:</strong> {{ $('Webhook').item.json.body.record.description }} </p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "232595a1-b58f-49b1-befe-e3de03239728",
+      "name": "Send a message",
+      "webhookId": "16363971-4a20-4f34-89dc-96ea6f81ca9a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "eFvR0KPNkJAaZEJn",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "85b44e09-32b3-489d-a98b-f8e26759b154",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5dd8d4a9c7777b694ec1c60c42d6dfe30425067a53e896c97f118402932caee6"
+  },
+  "id": "EqOJIZMweG-EMpTORVFYC",
+  "tags": []
+}
